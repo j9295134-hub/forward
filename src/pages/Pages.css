@@ -321,7 +321,7 @@ section h2 {
 
 .shop-header {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 1rem;
   align-items: center;
   margin-bottom: 2rem;
@@ -331,7 +331,8 @@ section h2 {
   display: flex;
   gap: 0.5rem;
   width: 100%;
-  max-width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
 }
 
 .search-bar input {
