@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react';
+import { Search } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import ProductCard from '../components/common/ProductCard';
@@ -63,6 +64,18 @@ const Shop: React.FC = () => {
 
         {/* Search and Filters */}
         <div className="shop-header">
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+            <button className="search-icon-btn" onClick={() => handleSearch(searchTerm)} aria-label="Search">
+              <Search size={18} />
+            </button>
+          </div>
+
           <div className="shop-filters">
             <select
               className="filter-select"
@@ -76,16 +89,6 @@ const Shop: React.FC = () => {
                 </option>
               ))}
             </select>
-          </div>
-
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchTerm}
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-            <button onClick={() => handleSearch(searchTerm)}>Search</button>
           </div>
 
           <div style={{ textAlign: 'right' }}>
