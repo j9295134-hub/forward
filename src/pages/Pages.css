@@ -359,7 +359,9 @@ section h2 {
 }
 
 .search-icon-btn {
-  padding: 0.75rem 0.85rem !important;
+  width: 1cm;
+  height: 1cm;
+  padding: 0 !important;
   border-radius: 0 8px 8px 0 !important;
   display: flex;
   align-items: center;
