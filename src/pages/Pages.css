@@ -329,7 +329,7 @@ section h2 {
 
 .search-bar {
   display: flex;
-  gap: 0;
+  position: relative;
   width: 100%;
   max-width: 280px;
   margin: 0;
@@ -337,9 +337,9 @@ section h2 {
 
 .search-bar input {
   flex: 1;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
   border: 2px solid var(--border-color);
-  border-radius: 8px 0 0 8px;
+  border-radius: 8px;
   font-size: 1rem;
   min-width: 0;
   max-width: 100%;
@@ -359,6 +359,10 @@ section h2 {
 }
 
 .search-icon-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
   width: 1cm;
   height: 1cm;
   padding: 0 !important;
@@ -976,7 +980,7 @@ section h2 {
   }
 
   .search-bar {
-    flex-direction: column;
+    max-width: 100%;
   }
 
   .product-actions {
