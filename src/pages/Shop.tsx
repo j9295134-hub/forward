@@ -7,7 +7,7 @@ import './Pages.css';
 
 const Shop: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const { products, categories } = useData();
+  const { products, categories, loading } = useData();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
   const [currentPage, setCurrentPage] = useState(1);
@@ -99,7 +99,11 @@ const Shop: React.FC = () => {
         </div>
 
         {/* Products Grid */}
-        {paginatedProducts.length > 0 ? (
+        {loading ? (
+          <div className="no-products">
+            <p>Loading products...</p>
+          </div>
+        ) : paginatedProducts.length > 0 ? (
           <>
             <div key={currentPage} className="grid grid-3 products-grid">
               {paginatedProducts.map((product) => (
