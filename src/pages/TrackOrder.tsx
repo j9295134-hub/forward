@@ -80,7 +80,7 @@ const TrackOrder: React.FC = () => {
       <div className="track-order-header" style={{
         textAlign: 'center',
         padding: '3rem 1rem',
-        background: 'linear-gradient(135deg, #12492d 0%, #2f8f5b 55%, #62c487 100%)',
+        backgroundColor: '#2f8f5b',
         color: 'white',
         borderRadius: '12px',
         marginBottom: '2rem'
@@ -171,7 +171,7 @@ const TrackOrder: React.FC = () => {
           }}>
             {/* Header */}
             <div style={{
-              background: 'linear-gradient(135deg, #12492d 0%, #2f8f5b 55%, #62c487 100%)',
+              backgroundColor: '#1f6d44',
               color: 'white',
               padding: '1.5rem',
               textAlign: 'center'

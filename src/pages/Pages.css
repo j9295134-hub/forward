@@ -18,9 +18,7 @@ section h2 {
 
 /* Hero Section */
 .hero {
-  background:
-    radial-gradient(circle at top right, rgba(var(--secondary-rgb), 0.32), transparent 28%),
-    linear-gradient(135deg, #12492d 0%, var(--primary-color) 48%, var(--secondary-color) 100%);
+  background-color: var(--primary-color);
   color: white;
   padding: 4rem 0;
   min-height: 500px;
@@ -304,7 +302,8 @@ section h2 {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.18), rgba(var(--secondary-rgb), 0.34));
+  background-color: rgba(var(--secondary-rgb), 0.24);
+  border: 1px solid rgba(var(--primary-rgb), 0.12);
   color: var(--primary-dark);
   display: flex;
   align-items: center;
@@ -340,7 +339,7 @@ section h2 {
 
 /* CTA Section */
 .cta-section {
-  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 52%, var(--secondary-color) 100%);
+  background-color: var(--primary-dark);
   color: white;
   text-align: center;
   padding: 4rem 0;
