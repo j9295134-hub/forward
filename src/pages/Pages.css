@@ -490,6 +490,15 @@ section h2 {
   border-color: var(--primary-color);
 }
 
+.pagination-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  color: var(--text-light);
+  font-weight: 700;
+}
+
 /* Product Details Page */
 .product-details {
   padding: 2rem 0;

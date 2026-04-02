@@ -5,6 +5,24 @@ import { useData } from '../context/DataContext';
 import ProductCard from '../components/common/ProductCard';
 import './Pages.css';
 
+type PaginationItem = number | 'ellipsis-left' | 'ellipsis-right';
+
+const getVisiblePages = (currentPage: number, totalPages: number): PaginationItem[] => {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  if (currentPage <= 4) {
+    return [1, 2, 3, 4, 5, 'ellipsis-right', totalPages];
+  }
+
+  if (currentPage >= totalPages - 3) {
+    return [1, 'ellipsis-left', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+  }
+
+  return [1, 'ellipsis-left', currentPage - 1, currentPage, currentPage + 1, 'ellipsis-right', totalPages];
+};
+
 const Shop: React.FC = () => {
   const [searchParams] = useSearchParams();
   const { products, categories, loading } = useData();
@@ -17,21 +35,24 @@ const Shop: React.FC = () => {
 
   const filteredProducts = useMemo(() => {
     const filtered = products.filter((product) => {
-      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      const matchesSearch =
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.description.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = !selectedCategory ||
+      const matchesCategory =
+        !selectedCategory ||
         product.category_id === selectedCategory ||
-        categories.find(c => c.slug === selectedCategory)?.id === product.category_id;
+        categories.find((category) => category.slug === selectedCategory)?.id === product.category_id;
+
       return matchesSearch && matchesCategory;
     });
 
     if (!selectedCategory) {
-      const key = filtered.map(p => p.id).join(',');
+      const key = filtered.map((product) => product.id).join(',');
       if (key !== shuffleCacheRef.current.key) {
         const shuffled = [...filtered];
-        for (let i = shuffled.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        for (let index = shuffled.length - 1; index > 0; index--) {
+          const swapIndex = Math.floor(Math.random() * (index + 1));
+          [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
         }
         shuffleCacheRef.current = { key, items: shuffled };
       }
@@ -42,9 +63,14 @@ const Shop: React.FC = () => {
   }, [products, categories, searchTerm, selectedCategory]);
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const safeCurrentPage = Math.min(currentPage, Math.max(totalPages, 1));
+  const visiblePages = useMemo(
+    () => getVisiblePages(safeCurrentPage, totalPages),
+    [safeCurrentPage, totalPages]
+  );
   const paginatedProducts = filteredProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    (safeCurrentPage - 1) * itemsPerPage,
+    safeCurrentPage * itemsPerPage
   );
 
   const handleSearch = (term: string) => {
@@ -62,7 +88,6 @@ const Shop: React.FC = () => {
       <div className="container">
         <h1>Shop</h1>
 
-        {/* Search and Filters */}
         <div className="shop-header">
           <div className="search-bar">
             <input
@@ -98,44 +123,48 @@ const Shop: React.FC = () => {
           </div>
         </div>
 
-        {/* Products Grid */}
         {loading ? (
           <div className="no-products">
             <p>Loading products...</p>
           </div>
         ) : paginatedProducts.length > 0 ? (
           <>
-            <div key={currentPage} className="grid grid-3 products-grid">
+            <div key={safeCurrentPage} className="grid grid-3 products-grid">
               {paginatedProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
 
-            {/* Pagination */}
             {totalPages > 1 && (
               <div className="pagination">
                 <button
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(Math.max(1, safeCurrentPage - 1))}
+                  disabled={safeCurrentPage === 1}
                 >
-                  ← Previous
+                  {'< Previous'}
                 </button>
 
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={currentPage === page ? 'active' : ''}
-                  >
-                    {page}
-                  </button>
-                ))}
+                {visiblePages.map((page) =>
+                  typeof page === 'number' ? (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={safeCurrentPage === page ? 'active' : ''}
+                    >
+                      {page}
+                    </button>
+                  ) : (
+                    <span key={page} className="pagination-ellipsis" aria-hidden="true">
+                      ...
+                    </span>
+                  )
+                )}
 
                 <button
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(Math.min(totalPages, safeCurrentPage + 1))}
+                  disabled={safeCurrentPage === totalPages}
                 >
-                  Next →
+                  {'Next >'}
                 </button>
               </div>
             )}
