@@ -113,15 +113,15 @@ export const replaceBrandName = (text: string, brandName: string): string => {
  * @returns Brand name
  */
 export const getBrandName = (): string => {
-  return import.meta.env.VITE_BRAND_NAME || '{{BRAND_NAME}}';
+  return import.meta.env.VITE_BRAND_NAME || 'HopeLink Imports';
 };
 
 /**
  * Gets the admin email address with sanitized domain
  * @returns Admin email address
  */
-export const getAdminEmail = (): string => {
-  const brandName = getBrandName();
+export const getAdminEmail = (brandNameOverride?: string): string => {
+  const brandName = brandNameOverride || getBrandName();
   // Sanitize brand name: remove spaces, special chars, convert to lowercase
   const sanitizedDomain = brandName.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '');
   return `admin@${sanitizedDomain}.com`;
@@ -131,8 +131,8 @@ export const getAdminEmail = (): string => {
  * Gets the support email address with sanitized domain
  * @returns Support email address
  */
-export const getSupportEmail = (): string => {
-  const brandName = getBrandName();
+export const getSupportEmail = (brandNameOverride?: string): string => {
+  const brandName = brandNameOverride || getBrandName();
   // Sanitize brand name: remove spaces, special chars, convert to lowercase
   const sanitizedDomain = brandName.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '');
   return `support@${sanitizedDomain}.com`;

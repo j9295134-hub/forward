@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Menu, X } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
-import { getBrandName } from '../../utils/helpers';
+import { useData } from '../../context/DataContext';
 import './Header.css';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { totalItems } = useCart();
-  const brandName = getBrandName();
+  const { settings } = useData();
+  const brandName = settings.brandName;
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

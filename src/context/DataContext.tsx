@@ -103,7 +103,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [packages, setPackages] = useState<Package[]>([]);
   const [settings, setSettings] = useState<AppSettings>({
     whatsappNumber: import.meta.env.VITE_WHATSAPP_NUMBER || '',
-    brandName: import.meta.env.VITE_BRAND_NAME || 'Jordan Imports',
+    brandName: import.meta.env.VITE_BRAND_NAME || 'HopeLink Imports',
   });
   const [loading, setLoading] = useState(true);
 

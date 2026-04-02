@@ -18,7 +18,9 @@ section h2 {
 
 /* Hero Section */
 .hero {
-  background-color: var(--secondary-color);
+  background:
+    radial-gradient(circle at top right, rgba(var(--secondary-rgb), 0.32), transparent 28%),
+    linear-gradient(135deg, #12492d 0%, var(--primary-color) 48%, var(--secondary-color) 100%);
   color: white;
   padding: 4rem 0;
   min-height: 500px;
@@ -47,6 +49,8 @@ section h2 {
 }
 
 .brand-highlight {
+  color: #f1fff4;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   animation: pulse 1.5s ease-in-out;
 }
 
@@ -68,6 +72,27 @@ section h2 {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+}
+
+.hero .btn-primary {
+  background-color: white;
+  color: var(--primary-dark);
+}
+
+.hero .btn-primary:hover {
+  background-color: #effaf2;
+  color: var(--primary-dark);
+}
+
+.hero .btn-outline {
+  border-color: rgba(255, 255, 255, 0.65);
+  color: white;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.hero .btn-outline:hover {
+  background-color: white;
+  color: var(--primary-dark);
 }
 
 .hero-illustration {
@@ -180,7 +205,14 @@ section h2 {
 }
 
 .category-icon {
-  font-size: 1.8rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background-color: rgba(var(--primary-rgb), 0.1);
+  color: var(--primary-color);
 }
 
 .category-card h3 {
@@ -269,7 +301,16 @@ section h2 {
 }
 
 .avatar {
-  font-size: 3rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.18), rgba(var(--secondary-rgb), 0.34));
+  color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
   flex-shrink: 0;
 }
 
@@ -291,13 +332,15 @@ section h2 {
 }
 
 .stars {
-  font-size: 1.2rem;
-  letter-spacing: 0.2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08rem;
+  color: var(--primary-color);
 }
 
 /* CTA Section */
 .cta-section {
-  background-color: var(--primary-color);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 52%, var(--secondary-color) 100%);
   color: white;
   text-align: center;
   padding: 4rem 0;
@@ -312,6 +355,16 @@ section h2 {
   font-size: 1.1rem;
   margin-bottom: 2rem;
   color: rgba(255, 255, 255, 0.9);
+}
+
+.cta-section .btn-primary {
+  background-color: white;
+  color: var(--primary-dark);
+}
+
+.cta-section .btn-primary:hover {
+  background-color: #effaf2;
+  color: var(--primary-dark);
 }
 
 /* Shop Page */
@@ -344,9 +397,6 @@ section h2 {
   min-width: 0;
   max-width: 100%;
 }
-  border-radius: 8px;
-  font-size: 1rem;
-}
 
 .search-bar button {
   padding: 0.75rem 1.5rem;
@@ -374,7 +424,7 @@ section h2 {
 }
 
 .search-bar button:hover {
-  background-color: #ff7a1d;
+  background-color: var(--primary-dark);
 }
 
 .shop-filters {
@@ -688,7 +738,7 @@ section h2 {
 .form-group select:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.1);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.14);
 }
 
 .form-group textarea {
@@ -719,7 +769,7 @@ section h2 {
 }
 
 .form-submit:hover {
-  background-color: #ff7a1d;
+  background-color: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
@@ -879,7 +929,9 @@ section h2 {
   }
 
   .avatar {
-    font-size: 2rem;
+    width: 48px;
+    height: 48px;
+    font-size: 0.9rem;
   }
 
   .testimonial-header h4 {

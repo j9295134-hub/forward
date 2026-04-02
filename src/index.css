@@ -1,16 +1,20 @@
 :root {
-  --primary-color: #ff8c42;
-  --secondary-color: #6c5ce7;
-  --success-color: #27ae60;
-  --danger-color: #e74c3c;
-  --warning-color: #f39c12;
-  --dark-bg: #1a1a1a;
-  --light-bg: #f8f9fa;
-  --text-dark: #2c3e50;
-  --text-light: #7f8c8d;
-  --border-color: #ecf0f1;
-  --shadow: 0 4px 12px rgba(255, 140, 66, 0.1);
-  --shadow-lg: 0 8px 24px rgba(255, 140, 66, 0.15);
+  --primary-color: #2f8f5b;
+  --primary-dark: #1f6d44;
+  --secondary-color: #62c487;
+  --secondary-dark: #43ac6b;
+  --success-color: #2f8f5b;
+  --danger-color: #c65353;
+  --warning-color: #d4a43f;
+  --dark-bg: #103923;
+  --light-bg: #f4fbf5;
+  --text-dark: #183526;
+  --text-light: #5f7a6a;
+  --border-color: #d8eadc;
+  --primary-rgb: 47, 143, 91;
+  --secondary-rgb: 98, 196, 135;
+  --shadow: 0 10px 30px rgba(var(--primary-rgb), 0.1);
+  --shadow-lg: 0 18px 40px rgba(var(--primary-rgb), 0.16);
 }
 
 * {
@@ -31,7 +35,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--light-bg);
+  background: linear-gradient(180deg, #ffffff 0%, var(--light-bg) 100%);
   color: var(--text-dark);
   line-height: 1.6;
   overflow-x: hidden;
@@ -77,7 +81,7 @@ a {
 }
 
 a:hover {
-  color: var(--secondary-color);
+  color: var(--primary-dark);
 }
 
 button {
@@ -100,7 +104,7 @@ input, textarea, select {
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.1);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.14);
 }
 
 img {
@@ -136,7 +140,7 @@ img {
 }
 
 .btn-primary:hover {
-  background-color: #ff7a1d;
+  background-color: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
@@ -147,7 +151,7 @@ img {
 }
 
 .btn-secondary:hover {
-  background-color: #5f3fd2;
+  background-color: var(--secondary-dark);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
@@ -169,7 +173,7 @@ img {
 }
 
 .btn-danger:hover {
-  background-color: #c0392b;
+  background-color: #a94444;
   transform: translateY(-2px);
 }
 
@@ -179,7 +183,7 @@ img {
 }
 
 .btn-success:hover {
-  background-color: #229954;
+  background-color: var(--primary-dark);
   transform: translateY(-2px);
 }
 

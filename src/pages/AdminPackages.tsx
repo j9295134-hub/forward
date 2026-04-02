@@ -89,8 +89,8 @@ const AdminPackages: React.FC = () => {
                         borderRadius: '20px',
                         fontSize: '0.75rem',
                         fontWeight: 600,
-                        backgroundColor: 'rgba(52, 152, 219, 0.2)',
-                        color: '#3498db'
+                        backgroundColor: 'rgba(47, 143, 91, 0.16)',
+                        color: '#2f8f5b'
                       }}>
                         {pkg.status}
                       </span>

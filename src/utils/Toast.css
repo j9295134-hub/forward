@@ -21,9 +21,9 @@
 }
 
 .toast-success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+  background-color: #e7f7ec;
+  color: #1f6d44;
+  border: 1px solid #c6e8d2;
 }
 
 .toast-error {
@@ -33,15 +33,15 @@
 }
 
 .toast-warning {
-  background-color: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeaa7;
+  background-color: #fff6dc;
+  color: #8b6a17;
+  border: 1px solid #f1dfaa;
 }
 
 .toast-info {
-  background-color: #d1ecf1;
-  color: #0c5460;
-  border: 1px solid #bee5eb;
+  background-color: #edf9f1;
+  color: #2f8f5b;
+  border: 1px solid #d4eddc;
 }
 
 .toast-icon {

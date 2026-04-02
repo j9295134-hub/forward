@@ -25,8 +25,8 @@ const TrackOrder: React.FC = () => {
   };
 
   const getShippingIcon = (route?: 'sea' | 'air') => {
-    if (!route) return <Truck size={48} color="#3498db" />;
-    return route === 'sea' ? <Ship size={48} color="#3498db" /> : <Plane size={48} color="#3498db" />;
+    if (!route) return <Truck size={48} color="#2f8f5b" />;
+    return route === 'sea' ? <Ship size={48} color="#2f8f5b" /> : <Plane size={48} color="#2f8f5b" />;
   };
 
   const getProgressPercentage = (status: string) => {
@@ -48,7 +48,7 @@ const TrackOrder: React.FC = () => {
       <div className="track-order-header" style={{
         textAlign: 'center',
         padding: '3rem 1rem',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #12492d 0%, #2f8f5b 55%, #62c487 100%)',
         color: 'white',
         borderRadius: '12px',
         marginBottom: '2rem'
@@ -124,7 +124,7 @@ const TrackOrder: React.FC = () => {
           }}>
             {/* Header */}
             <div style={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: 'linear-gradient(135deg, #12492d 0%, #2f8f5b 55%, #62c487 100%)',
               color: 'white',
               padding: '1.5rem',
               textAlign: 'center'
@@ -154,14 +154,14 @@ const TrackOrder: React.FC = () => {
                 <div style={{
                   width: '100%',
                   height: '12px',
-                  backgroundColor: '#e0e0e0',
+                  backgroundColor: '#d7ebdb',
                   borderRadius: '6px',
                   overflow: 'hidden'
                 }}>
                   <div style={{
                     width: `${getProgressPercentage(searchedPackage.status)}%`,
                     height: '100%',
-                    backgroundColor: '#667eea',
+                    backgroundColor: '#2f8f5b',
                     transition: 'width 0.3s ease'
                   }} />
                 </div>
@@ -229,7 +229,7 @@ const TrackOrder: React.FC = () => {
                   top: '0',
                   bottom: '0',
                   width: '2px',
-                  backgroundColor: '#667eea'
+                  backgroundColor: '#2f8f5b'
                 }} />
                 
                 <div style={{ marginBottom: '1.5rem', position: 'relative' }}>
@@ -239,9 +239,9 @@ const TrackOrder: React.FC = () => {
                     width: '1rem',
                     height: '1rem',
                     borderRadius: '50%',
-                    backgroundColor: '#667eea',
+                    backgroundColor: '#2f8f5b',
                     border: '3px solid white',
-                    boxShadow: '0 0 0 2px #667eea'
+                    boxShadow: '0 0 0 2px #2f8f5b'
                   }} />
                   <div>
                     <strong>{searchedPackage.status}</strong>

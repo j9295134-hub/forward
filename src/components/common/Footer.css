@@ -19,7 +19,7 @@
 }
 
 .footer-section p {
-  color: #bdc3c7;
+  color: #d2e6d8;
   margin-bottom: 0.5rem;
   line-height: 1.6;
 }
@@ -34,7 +34,7 @@
 }
 
 .footer-section a {
-  color: #bdc3c7;
+  color: #d2e6d8;
   transition: color 0.3s ease;
   text-decoration: none;
 }
@@ -54,13 +54,13 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background-color: rgba(255, 140, 66, 0.1);
+  background-color: rgba(var(--secondary-rgb), 0.12);
   border-radius: 8px;
   transition: all 0.3s ease;
 }
 
 .footer-links a:hover {
-  background-color: rgba(255, 140, 66, 0.2);
+  background-color: rgba(var(--secondary-rgb), 0.22);
   color: white;
 }
 

@@ -3,17 +3,15 @@ import { Link } from 'react-router-dom';
 import { CheckCircle, Truck, MessageSquare, Users } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import ProductCard from '../components/common/ProductCard';
-import { getBrandName } from '../utils/helpers';
 import './Pages.css';
 
 const Home: React.FC = () => {
-  const { products, categories } = useData();
-  const brandName = getBrandName();
+  const { products, categories, settings } = useData();
+  const brandName = settings.brandName;
   const featuredProducts = products.filter((p) => p.is_featured).slice(0, 4);
 
   return (
     <div className="home-page">
-      {/* Hero Section */}
       <section className="hero">
         <div className="container">
           <div className="hero-content">
@@ -40,7 +38,6 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* How It Works */}
       <section className="how-it-works" id="how-it-works">
         <div className="container">
           <h2>How It Works</h2>
@@ -69,7 +66,7 @@ const Home: React.FC = () => {
             <div className="how-it-works-card">
               <div className="step-number">4</div>
               <div className="step-content">
-                <h3>Receive & Enjoy</h3>
+                <h3>Receive and Enjoy</h3>
                 <p>Get your products delivered to your doorstep globally.</p>
               </div>
             </div>
@@ -77,7 +74,6 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Products */}
       <section className="featured-products">
         <div className="container">
           <h2>Featured Products</h2>
@@ -98,7 +94,6 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Categories Preview */}
       <section className="categories-preview">
         <div className="container">
           <h2>Shop by Category</h2>
@@ -109,21 +104,15 @@ const Home: React.FC = () => {
                 to={`/shop?category=${category.slug}`}
                 className="category-card"
               >
-                <div className="category-icon">🏷️</div>
+                <div className="category-icon">Tag</div>
                 <h3>{category.name}</h3>
-                <p>
-                  {
-                    products.filter((p) => p.category_id === category.id).length
-                  }{' '}
-                  items
-                </p>
+                <p>{products.filter((p) => p.category_id === category.id).length} items</p>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
       <section className="benefits">
         <div className="container">
           <div className="grid grid-2">
@@ -151,71 +140,69 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
       <section className="testimonials" id="testimonials">
         <div className="container">
           <h2>What Our Customers Say</h2>
           <div className="grid grid-4">
             <div className="testimonial-card">
               <div className="testimonial-header">
-                <div className="avatar">�‍💼</div>
+                <div className="avatar">KM</div>
                 <div>
                   <h4>Kwame Mensah</h4>
-                  <p className="location">🇬🇭 Accra, Ghana</p>
+                  <p className="location">Accra, Ghana</p>
                 </div>
               </div>
               <p className="testimonial-text">
-                Ordered a phone and some accessories — everything arrived well packaged and on time. The WhatsApp updates made the whole process stress-free. Jordan Imports is the real deal!
+                Ordered a phone and some accessories and everything arrived well packaged and on time. The WhatsApp updates made the whole process stress-free. {brandName} is the real deal.
               </p>
-              <div className="stars">⭐⭐⭐⭐⭐</div>
+              <div className="stars">5/5</div>
             </div>
 
             <div className="testimonial-card">
               <div className="testimonial-header">
-                <div className="avatar">👩‍🦱</div>
+                <div className="avatar">AO</div>
                 <div>
                   <h4>Abena Osei</h4>
-                  <p className="location">🇬🇭 Kumasi, Ghana</p>
+                  <p className="location">Kumasi, Ghana</p>
                 </div>
               </div>
               <p className="testimonial-text">
-                I was skeptical at first but they delivered exactly what I ordered. The prices are unbeatable compared to buying locally. I've already referred three friends!
+                I was skeptical at first but they delivered exactly what I ordered. The prices are unbeatable compared to buying locally. I have already referred three friends.
               </p>
-              <div className="stars">⭐⭐⭐⭐⭐</div>
+              <div className="stars">5/5</div>
             </div>
 
             <div className="testimonial-card">
               <div className="testimonial-header">
-                <div className="avatar">👨‍💻</div>
+                <div className="avatar">EO</div>
                 <div>
                   <h4>Emeka Okafor</h4>
-                  <p className="location">🇳🇬 Lagos, Nigeria</p>
+                  <p className="location">Lagos, Nigeria</p>
                 </div>
               </div>
               <p className="testimonial-text">
-                Fast shipping and great customer service on WhatsApp. Got my order within the estimated time and everything was exactly as described. Will definitely order again!
+                Fast shipping and great customer service on WhatsApp. I got my order within the estimated time and everything was exactly as described. I will definitely order again.
               </p>
-              <div className="stars">⭐⭐⭐⭐⭐</div>
+              <div className="stars">5/5</div>
             </div>
 
             <div className="testimonial-card">
               <div className="testimonial-header">
-                <div className="avatar">👩‍🎓</div>
+                <div className="avatar">CE</div>
                 <div>
                   <h4>Chidinma Eze</h4>
-                  <p className="location">🇳🇬 Abuja, Nigeria</p>
+                  <p className="location">Abuja, Nigeria</p>
                 </div>
               </div>
               <p className="testimonial-text">
-                The custom order feature is amazing — I told them exactly what I needed and they sourced it for me. Quality products, fair prices, and they keep you updated every step of the way.
+                The custom order feature is amazing. I told them exactly what I needed and they sourced it for me. Quality products, fair prices, and they keep you updated every step of the way.
               </p>
-              <div className="stars">⭐⭐⭐⭐⭐</div>
+              <div className="stars">5/5</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="cta-section">
         <div className="container">
           <h2>Ready to Start?</h2>

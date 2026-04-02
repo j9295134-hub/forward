@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(135deg, #12492d 0%, var(--primary-color) 55%, var(--secondary-color) 100%);
   padding: 2rem 0;
 }
 
@@ -56,7 +56,7 @@
 .login-card input:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.1);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.14);
 }
 
 .login-info {
@@ -73,7 +73,8 @@
 }
 
 .login-sidebar {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   padding: 2rem;
   border-radius: 12px;
   color: white;
@@ -138,20 +139,20 @@
 .admin-sidebar a {
   display: block;
   padding: 0.75rem 1.5rem;
-  color: #bdc3c7;
+  color: #d5eadd;
   text-decoration: none;
   transition: all 0.3s ease;
   border-left: 3px solid transparent;
 }
 
 .admin-sidebar a:hover {
-  background-color: rgba(255, 140, 66, 0.1);
+  background-color: rgba(var(--secondary-rgb), 0.15);
   color: white;
   border-left-color: var(--primary-color);
 }
 
 .admin-sidebar a.active {
-  background-color: rgba(255, 140, 66, 0.2);
+  background-color: rgba(var(--secondary-rgb), 0.24);
   color: var(--primary-color);
   border-left-color: var(--primary-color);
   font-weight: 600;
@@ -173,7 +174,7 @@
 }
 
 .logout-btn:hover {
-  background-color: #c0392b;
+  background-color: #a94444;
 }
 
 .admin-main {
@@ -333,7 +334,7 @@ table tbody tr:last-child td {
 .admin-form select:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.1);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.14);
 }
 
 .admin-form textarea {

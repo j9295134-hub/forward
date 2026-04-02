@@ -1,10 +1,12 @@
 import React from 'react';
-import { getBrandName, getSupportEmail } from '../../utils/helpers';
+import { useData } from '../../context/DataContext';
+import { getSupportEmail } from '../../utils/helpers';
 import './Footer.css';
 
 const Footer: React.FC = () => {
-  const brandName = getBrandName();
-  const supportEmail = getSupportEmail();
+  const { settings } = useData();
+  const brandName = settings.brandName;
+  const supportEmail = getSupportEmail(brandName);
   const currentYear = new Date().getFullYear();
 
   return (

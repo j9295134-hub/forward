@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useData } from '../context/DataContext';
 import { useToast } from '../utils/Toast';
-import { getBrandName, getAdminEmail } from '../utils/helpers';
+import { getAdminEmail } from '../utils/helpers';
 import '../components/admin/Admin.css';
 
 const AdminLogin: React.FC = () => {
@@ -11,9 +12,10 @@ const AdminLogin: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { settings } = useData();
   const { addToast } = useToast();
-  const brandName = getBrandName();
-  const adminEmail = getAdminEmail();
+  const brandName = settings.brandName;
+  const adminEmail = getAdminEmail(brandName);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
