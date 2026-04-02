@@ -27,7 +27,23 @@ const AdminPackageForm: React.FC = () => {
     package_items: [] as PackageItem[],
   });
   const [selectedProductId, setSelectedProductId] = useState('');
+  const [productSearchTerm, setProductSearchTerm] = useState('');
   const [selectedQuantity, setSelectedQuantity] = useState(1);
+
+  const normalizedProductSearch = productSearchTerm.trim().toLowerCase();
+  const filteredProducts = products.filter((product) => {
+    if (!normalizedProductSearch) return true;
+
+    return (
+      product.name.toLowerCase().includes(normalizedProductSearch) ||
+      product.id.toLowerCase().includes(normalizedProductSearch)
+    );
+  });
+  const selectedProduct = products.find((item) => item.id === selectedProductId) || null;
+  const productOptions =
+    selectedProduct && !filteredProducts.some((item) => item.id === selectedProduct.id)
+      ? [selectedProduct, ...filteredProducts]
+      : filteredProducts;
 
   useEffect(() => {
     if (existingPackage) {
@@ -138,6 +154,7 @@ const AdminPackageForm: React.FC = () => {
     });
 
     setSelectedProductId('');
+    setProductSearchTerm('');
     setSelectedQuantity(1);
   };
 
@@ -382,6 +399,25 @@ const AdminPackageForm: React.FC = () => {
             marginBottom: '1rem'
           }}>
             <div>
+              <label htmlFor="package_product_search" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
+                Search Products
+              </label>
+              <input
+                type="text"
+                id="package_product_search"
+                value={productSearchTerm}
+                onChange={(e) => setProductSearchTerm(e.target.value)}
+                placeholder="Type a product name or ID"
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '2px solid var(--border-color)',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                  marginBottom: '0.75rem',
+                }}
+              />
+
               <label htmlFor="package_product" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
                 Product
               </label>
@@ -398,12 +434,72 @@ const AdminPackageForm: React.FC = () => {
                 }}
               >
                 <option value="">Select a product</option>
-                {products.map((product) => (
+                {productOptions.map((product) => (
                   <option key={product.id} value={product.id}>
                     {product.name}
                   </option>
                 ))}
               </select>
+
+              <p style={{ margin: '0.5rem 0 0', color: 'var(--text-light)', fontSize: '0.92rem' }}>
+                Showing {filteredProducts.length} of {products.length} products
+              </p>
+
+              {normalizedProductSearch && filteredProducts.length === 0 && (
+                <p style={{ margin: '0.5rem 0 0', color: 'var(--danger-color)', fontSize: '0.92rem' }}>
+                  No products match that search yet.
+                </p>
+              )}
+
+              {selectedProduct && (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  marginTop: '0.75rem',
+                  padding: '0.75rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '10px',
+                  backgroundColor: 'var(--light-bg)',
+                }}>
+                  {selectedProduct.image_url ? (
+                    <img
+                      src={selectedProduct.image_url}
+                      alt={selectedProduct.name}
+                      style={{
+                        width: '56px',
+                        height: '56px',
+                        objectFit: 'cover',
+                        borderRadius: '10px',
+                        border: '1px solid rgba(var(--primary-rgb), 0.12)',
+                      }}
+                    />
+                  ) : (
+                    <div style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '10px',
+                      backgroundColor: '#e9f6ed',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 700,
+                      color: 'var(--primary-dark)',
+                    }}>
+                      {selectedProduct.name.slice(0, 1).toUpperCase()}
+                    </div>
+                  )}
+
+                  <div style={{ minWidth: 0 }}>
+                    <p style={{ margin: 0, color: 'var(--text-dark)', fontWeight: 600 }}>
+                      {selectedProduct.name}
+                    </p>
+                    <p style={{ margin: '0.3rem 0 0', color: 'var(--text-light)', fontSize: '0.92rem' }}>
+                      Ready to attach to this tracking package
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>
