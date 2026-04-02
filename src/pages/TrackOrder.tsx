@@ -1,27 +1,59 @@
 import React, { useState } from 'react';
 import { Package as PackageIcon, Search, Truck, Ship, Plane } from 'lucide-react';
-import { useData } from '../context/DataContext';
 import type { Package } from '../context/DataContext';
+import { packagesAPI } from '../utils/api';
+import { normalizeTrackingId } from '../utils/tracking';
 import './Pages.css';
 
 const TrackOrder: React.FC = () => {
-  const { getPackageByTrackingId } = useData();
   const [trackingId, setTrackingId] = useState('');
   const [searchedPackage, setSearchedPackage] = useState<Package | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState('');
 
-  const handleSearch = (e: React.FormEvent) => {
+  const mapPackage = (p: any): Package => ({
+    id: p.id,
+    tracking_id: p.trackingId ?? p.tracking_id,
+    status: p.status,
+    shipping_route: (p.shippingRoute ?? p.shipping_route ?? 'sea') as 'sea' | 'air',
+    current_location: p.currentLocation ?? p.current_location ?? '',
+    origin: p.origin ?? '',
+    destination: p.destination ?? '',
+    created_at: p.createdAt ?? p.created_at ?? new Date().toISOString(),
+    updated_at: p.updatedAt ?? p.updated_at ?? new Date().toISOString(),
+    estimated_delivery: p.estimatedDelivery ?? p.estimated_delivery,
+  });
+
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!trackingId.trim()) {
+
+    const normalizedTrackingId = normalizeTrackingId(trackingId);
+    if (!normalizedTrackingId) {
       return;
     }
 
-    const pkg = getPackageByTrackingId(trackingId.trim().toUpperCase());
-    setSearchedPackage(pkg || null);
-    setNotFound(!pkg);
+    setTrackingId(normalizedTrackingId);
     setHasSearched(true);
+    setNotFound(false);
+    setSearchError('');
+    setSearchedPackage(null);
+    setIsSearching(true);
+
+    try {
+      const pkg = await packagesAPI.getByTrackingId(normalizedTrackingId);
+      setSearchedPackage(mapPackage(pkg));
+    } catch (error: any) {
+      if (error?.response?.status === 404) {
+        setNotFound(true);
+      } else {
+        console.error('Tracking lookup failed:', error);
+        setSearchError('We could not fetch your tracking details right now. Please try again shortly.');
+      }
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const getShippingIcon = (route?: 'sea' | 'air') => {
@@ -74,6 +106,8 @@ const TrackOrder: React.FC = () => {
               setTrackingId(e.target.value);
               setHasSearched(false);
               setNotFound(false);
+              setSearchError('');
+              setSearchedPackage(null);
             }}
             placeholder="Enter tracking ID (e.g., SEA-123456-ABC789)"
             style={{
@@ -85,7 +119,7 @@ const TrackOrder: React.FC = () => {
               fontFamily: 'monospace',
             }}
           />
-          <button type="submit" className="btn btn-primary" style={{
+          <button type="submit" className="btn btn-primary" disabled={isSearching} style={{
             padding: '1rem 2rem',
             fontSize: '1.1rem',
             display: 'flex',
@@ -93,9 +127,22 @@ const TrackOrder: React.FC = () => {
             gap: '0.5rem'
           }}>
             <Search size={20} />
-            Track
+            {isSearching ? 'Tracking...' : 'Track'}
           </button>
         </form>
+
+        {searchError && hasSearched && (
+          <div style={{
+            padding: '2rem',
+            backgroundColor: 'rgba(212, 164, 63, 0.1)',
+            border: '2px solid rgba(212, 164, 63, 0.25)',
+            borderRadius: '12px',
+            textAlign: 'center'
+          }}>
+            <h3 style={{ color: '#8b6a17', marginBottom: '0.5rem' }}>Tracking Unavailable</h3>
+            <p style={{ color: 'var(--text-dark)' }}>{searchError}</p>
+          </div>
+        )}
 
         {notFound && hasSearched && (
           <div style={{

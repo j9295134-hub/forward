@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { productsAPI, categoriesAPI, packagesAPI, settingsAPI } from '../utils/api';
+import { normalizeTrackingId } from '../utils/tracking';
 
 export interface Product {
   id: string;
@@ -200,7 +201,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const addPackage = useCallback(async (pkg: Omit<Package, 'id' | 'created_at' | 'updated_at'>) => {
     const data = await packagesAPI.create({
-      trackingId: pkg.tracking_id,
+      trackingId: normalizeTrackingId(pkg.tracking_id),
       status: pkg.status,
       shippingRoute: pkg.shipping_route,
       origin: pkg.origin,
@@ -235,7 +236,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const getPackageByTrackingId = useCallback(
     (trackingId: string) =>
-      packages.find((p) => p.tracking_id.toUpperCase() === trackingId.toUpperCase()),
+      packages.find((p) => normalizeTrackingId(p.tracking_id) === normalizeTrackingId(trackingId)),
     [packages]
   );
 

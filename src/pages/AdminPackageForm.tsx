@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useToast } from '../utils/Toast';
 import { ADMIN_ROUTES } from '../utils/adminRoutes';
+import { normalizeTrackingId } from '../utils/tracking';
 import '../components/admin/Admin.css';
 
 const AdminPackageForm: React.FC = () => {
@@ -75,7 +76,7 @@ const AdminPackageForm: React.FC = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === 'tracking_id' ? normalizeTrackingId(value) : value,
     }));
   };
 
@@ -85,7 +86,7 @@ const AdminPackageForm: React.FC = () => {
     const timestamp = Date.now().toString().slice(-6);
     setFormData((prev) => ({
       ...prev,
-      tracking_id: `${prefix}-${timestamp}-${randomNum}`,
+      tracking_id: normalizeTrackingId(`${prefix}-${timestamp}-${randomNum}`),
     }));
   };
 
