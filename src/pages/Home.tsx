@@ -104,7 +104,7 @@ const Home: React.FC = () => {
                 to={`/shop?category=${category.slug}`}
                 className="category-card"
               >
-                <div className="category-icon">Tag</div>
+                <div className="category-icon">EXPLORE</div>
                 <h3>{category.name}</h3>
                 <p>{products.filter((p) => p.category_id === category.id).length} items</p>
               </Link>
