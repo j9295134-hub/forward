@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { formatCurrency } from '../utils/helpers';
+import { ADMIN_ROUTES } from '../utils/adminRoutes';
 import '../components/admin/Admin.css';
 
 const AdminDashboard: React.FC = () => {
@@ -23,7 +24,7 @@ const AdminDashboard: React.FC = () => {
     <div className="admin-dashboard">
       <div className="dashboard-header">
         <h1>Dashboard Overview</h1>
-        <Link to="/admin/products/new" className="btn btn-primary">
+        <Link to={ADMIN_ROUTES.newProduct} className="btn btn-primary">
           ➕ Add New Product
         </Link>
       </div>
@@ -76,7 +77,7 @@ const AdminDashboard: React.FC = () => {
             {isFiltering && (
               <button onClick={() => { setMinPrice(''); setMaxPrice(''); }} className="btn btn-outline btn-sm">Clear</button>
             )}
-            <Link to="/admin/products" className="btn btn-primary btn-sm">View All</Link>
+            <Link to={ADMIN_ROUTES.products} className="btn btn-primary btn-sm">View All</Link>
           </div>
         </div>
 
@@ -116,7 +117,7 @@ const AdminDashboard: React.FC = () => {
                     <td>{product.is_featured ? '⭐' : '-'}</td>
                     <td>
                       <div className="table-actions">
-                        <Link to={`/admin/products/${product.id}/edit`} className="btn btn-secondary btn-sm">
+                        <Link to={ADMIN_ROUTES.productEdit(product.id)} className="btn btn-secondary btn-sm">
                           ✏️ Edit
                         </Link>
                       </div>
@@ -126,7 +127,7 @@ const AdminDashboard: React.FC = () => {
               ) : (
                 <tr>
                   <td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-light)' }}>
-                    {isFiltering ? 'No products match the selected price range' : <>No products yet. <Link to="/admin/products/new">Create one</Link></>}
+                    {isFiltering ? 'No products match the selected price range' : <>No products yet. <Link to={ADMIN_ROUTES.newProduct}>Create one</Link></>}
                   </td>
                 </tr>
               )}
@@ -141,10 +142,10 @@ const AdminDashboard: React.FC = () => {
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
         gap: '1rem'
       }}>
-        <Link to="/admin/products" className="btn btn-primary" style={{ padding: '1rem', textAlign: 'center' }}>
+        <Link to={ADMIN_ROUTES.products} className="btn btn-primary" style={{ padding: '1rem', textAlign: 'center' }}>
           📦 Manage Products
         </Link>
-        <Link to="/admin/categories" className="btn btn-secondary" style={{ padding: '1rem', textAlign: 'center' }}>
+        <Link to={ADMIN_ROUTES.categories} className="btn btn-secondary" style={{ padding: '1rem', textAlign: 'center' }}>
           🏷️ Manage Categories
         </Link>
         <Link to="/" className="btn btn-outline" style={{ padding: '1rem', textAlign: 'center' }}>

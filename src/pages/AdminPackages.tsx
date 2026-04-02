@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useToast } from '../utils/Toast';
+import { ADMIN_ROUTES } from '../utils/adminRoutes';
 import '../components/admin/Admin.css';
 
 const AdminPackages: React.FC = () => {
@@ -34,7 +35,7 @@ const AdminPackages: React.FC = () => {
   return (
     <div>
       <div style={{ marginBottom: '2rem' }}>
-        <button onClick={() => navigate('/admin/dashboard')} className="btn btn-outline" style={{ marginBottom: '1rem' }}>
+        <button onClick={() => navigate(ADMIN_ROUTES.dashboard)} className="btn btn-outline" style={{ marginBottom: '1rem' }}>
           <ArrowLeft size={18} />
           Back
         </button>
@@ -56,7 +57,7 @@ const AdminPackages: React.FC = () => {
             fontSize: '1rem'
           }}
         />
-        <Link to="/admin/packages/new" className="btn btn-primary">
+        <Link to={ADMIN_ROUTES.newPackage} className="btn btn-primary">
           ➕ Add New Package
         </Link>
       </div>
@@ -100,7 +101,7 @@ const AdminPackages: React.FC = () => {
                     <td>{new Date(pkg.updated_at).toLocaleDateString()}</td>
                     <td>
                       <div className="table-actions">
-                        <Link to={`/admin/packages/${pkg.id}/edit`} className="btn btn-secondary btn-sm">
+                        <Link to={ADMIN_ROUTES.packageEdit(pkg.id)} className="btn btn-secondary btn-sm">
                           ✏️ Edit
                         </Link>
                         <button

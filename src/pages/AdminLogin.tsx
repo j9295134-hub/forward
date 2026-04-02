@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import { useToast } from '../utils/Toast';
 import { getAdminEmail } from '../utils/helpers';
+import { ADMIN_ROUTES } from '../utils/adminRoutes';
 import '../components/admin/Admin.css';
 
 const AdminLogin: React.FC = () => {
@@ -25,7 +26,7 @@ const AdminLogin: React.FC = () => {
     setTimeout(() => {
       if (login(email, password)) {
         addToast('Login successful!', 'success');
-        navigate('/admin/dashboard');
+        navigate(ADMIN_ROUTES.dashboard);
       } else {
         addToast('Invalid email or password', 'error');
       }

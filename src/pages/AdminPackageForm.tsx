@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useToast } from '../utils/Toast';
+import { ADMIN_ROUTES } from '../utils/adminRoutes';
 import '../components/admin/Admin.css';
 
 const AdminPackageForm: React.FC = () => {
@@ -64,7 +65,7 @@ const AdminPackageForm: React.FC = () => {
         await addPackage(formData);
         addToast(`Package ${formData.tracking_id} created successfully`, 'success');
       }
-      navigate('/admin/packages');
+      navigate(ADMIN_ROUTES.packages);
     } catch (error) {
       addToast('An error occurred', 'error');
     }
@@ -111,7 +112,7 @@ const AdminPackageForm: React.FC = () => {
 
   return (
     <div>
-      <button onClick={() => navigate('/admin/packages')} className="btn btn-outline" style={{ marginBottom: '1rem' }}>
+      <button onClick={() => navigate(ADMIN_ROUTES.packages)} className="btn btn-outline" style={{ marginBottom: '1rem' }}>
         <ArrowLeft size={18} />
         Back to Packages
       </button>
@@ -299,7 +300,7 @@ const AdminPackageForm: React.FC = () => {
           <button type="submit" className="btn btn-primary">
             {isEditMode ? 'Update Package' : 'Create Package'}
           </button>
-          <button type="button" onClick={() => navigate('/admin/packages')} className="btn btn-outline">
+          <button type="button" onClick={() => navigate(ADMIN_ROUTES.packages)} className="btn btn-outline">
             Cancel
           </button>
         </div>

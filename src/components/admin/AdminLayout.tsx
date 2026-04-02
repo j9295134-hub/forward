@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { ADMIN_ROUTES } from '../../utils/adminRoutes';
 import './Admin.css';
 
 interface AdminLayoutProps {
@@ -16,7 +17,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/admin');
+    navigate(ADMIN_ROUTES.login);
   };
 
   const isActive = (path: string) => {
@@ -49,8 +50,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         <ul>
           <li>
             <Link
-              to="/admin/dashboard"
-              className={isActive('/admin/dashboard') ? 'active' : ''}
+              to={ADMIN_ROUTES.dashboard}
+              className={isActive(ADMIN_ROUTES.dashboard) ? 'active' : ''}
               onClick={() => setIsSidebarOpen(false)}
             >
               📊 Dashboard
@@ -58,8 +59,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </li>
           <li>
             <Link
-              to="/admin/products"
-              className={isActive('/admin/products') ? 'active' : ''}
+              to={ADMIN_ROUTES.products}
+              className={isActive(ADMIN_ROUTES.products) ? 'active' : ''}
               onClick={() => setIsSidebarOpen(false)}
             >
               📦 Products
@@ -67,8 +68,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </li>
           <li>
             <Link
-              to="/admin/categories"
-              className={isActive('/admin/categories') ? 'active' : ''}
+              to={ADMIN_ROUTES.categories}
+              className={isActive(ADMIN_ROUTES.categories) ? 'active' : ''}
               onClick={() => setIsSidebarOpen(false)}
             >
               🏷️ Categories
@@ -76,8 +77,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </li>
           <li>
             <Link
-              to="/admin/packages"
-              className={isActive('/admin/packages') ? 'active' : ''}
+              to={ADMIN_ROUTES.packages}
+              className={isActive(ADMIN_ROUTES.packages) ? 'active' : ''}
               onClick={() => setIsSidebarOpen(false)}
             >
               📦 Track Orders

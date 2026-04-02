@@ -4,6 +4,7 @@ import { ArrowLeft, Plus } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useToast } from '../utils/Toast';
 import { generateSlug } from '../utils/helpers';
+import { ADMIN_ROUTES } from '../utils/adminRoutes';
 import '../components/admin/Admin.css';
 
 const AdminCategories: React.FC = () => {
@@ -95,7 +96,7 @@ const AdminCategories: React.FC = () => {
   return (
     <div>
       <div style={{ marginBottom: '2rem' }}>
-        <button onClick={() => navigate('/admin/dashboard')} className="btn btn-outline" style={{ marginBottom: '1rem' }}>
+        <button onClick={() => navigate(ADMIN_ROUTES.dashboard)} className="btn btn-outline" style={{ marginBottom: '1rem' }}>
           <ArrowLeft size={18} />
           Back
         </button>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useToast } from '../utils/Toast';
+import { ADMIN_ROUTES } from '../utils/adminRoutes';
 import '../components/admin/Admin.css';
 
 const AdminProducts: React.FC = () => {
@@ -44,7 +45,7 @@ const AdminProducts: React.FC = () => {
   return (
     <div>
       <div style={{ marginBottom: '2rem' }}>
-        <button onClick={() => navigate('/admin/dashboard')} className="btn btn-outline" style={{ marginBottom: '1rem' }}>
+        <button onClick={() => navigate(ADMIN_ROUTES.dashboard)} className="btn btn-outline" style={{ marginBottom: '1rem' }}>
           <ArrowLeft size={18} />
           Back
         </button>
@@ -66,7 +67,7 @@ const AdminProducts: React.FC = () => {
             fontSize: '1rem'
           }}
         />
-        <Link to="/admin/products/new" className="btn btn-primary">
+        <Link to={ADMIN_ROUTES.newProduct} className="btn btn-primary">
           ➕ Add New Product
         </Link>
         <button onClick={handleDeleteAll} className="btn btn-danger">
@@ -111,7 +112,7 @@ const AdminProducts: React.FC = () => {
                     <td>{product.is_featured ? '⭐ Yes' : 'No'}</td>
                     <td>
                       <div className="table-actions">
-                        <Link to={`/admin/products/${product.id}/edit`} className="btn btn-secondary btn-sm">
+                        <Link to={ADMIN_ROUTES.productEdit(product.id)} className="btn btn-secondary btn-sm">
                           ✏️ Edit
                         </Link>
                         <button

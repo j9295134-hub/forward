@@ -25,6 +25,7 @@ import AdminProductForm from './pages/AdminProductForm';
 import AdminCategories from './pages/AdminCategories';
 import AdminPackages from './pages/AdminPackages';
 import AdminPackageForm from './pages/AdminPackageForm';
+import { ADMIN_ROUTES } from './utils/adminRoutes';
 
 import './App.css';
 
@@ -89,10 +90,10 @@ function App() {
                 />
 
                 {/* Admin Routes */}
-                <Route path="/admin" element={<AdminLogin />} />
+                <Route path={ADMIN_ROUTES.login} element={<AdminLogin />} />
 
                 <Route
-                  path="/admin/dashboard"
+                  path={ADMIN_ROUTES.dashboard}
                   element={
                     <ProtectedRoute>
                       <AdminLayout>
@@ -103,7 +104,7 @@ function App() {
                 />
 
                 <Route
-                  path="/admin/products"
+                  path={ADMIN_ROUTES.products}
                   element={
                     <ProtectedRoute>
                       <AdminLayout>
@@ -114,7 +115,7 @@ function App() {
                 />
 
                 <Route
-                  path="/admin/products/new"
+                  path={ADMIN_ROUTES.newProduct}
                   element={
                     <ProtectedRoute>
                       <AdminLayout>
@@ -125,7 +126,7 @@ function App() {
                 />
 
                 <Route
-                  path="/admin/products/:id/edit"
+                  path={`${ADMIN_ROUTES.products}/:id/edit`}
                   element={
                     <ProtectedRoute>
                       <AdminLayout>
@@ -136,7 +137,7 @@ function App() {
                 />
 
                 <Route
-                  path="/admin/categories"
+                  path={ADMIN_ROUTES.categories}
                   element={
                     <ProtectedRoute>
                       <AdminLayout>
@@ -147,7 +148,7 @@ function App() {
                 />
 
                 <Route
-                  path="/admin/packages"
+                  path={ADMIN_ROUTES.packages}
                   element={
                     <ProtectedRoute>
                       <AdminLayout>
@@ -158,7 +159,7 @@ function App() {
                 />
 
                 <Route
-                  path="/admin/packages/new"
+                  path={ADMIN_ROUTES.newPackage}
                   element={
                     <ProtectedRoute>
                       <AdminLayout>
@@ -169,7 +170,7 @@ function App() {
                 />
 
                 <Route
-                  path="/admin/packages/:id/edit"
+                  path={`${ADMIN_ROUTES.packages}/:id/edit`}
                   element={
                     <ProtectedRoute>
                       <AdminLayout>
