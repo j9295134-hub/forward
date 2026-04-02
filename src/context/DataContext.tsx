@@ -27,6 +27,13 @@ export interface AppSettings {
   brandName: string;
 }
 
+export interface PackageItem {
+  product_id?: string;
+  name: string;
+  image_url: string;
+  quantity: number;
+}
+
 export interface Package {
   id: string;
   tracking_id: string;
@@ -38,6 +45,7 @@ export interface Package {
   created_at: string;
   updated_at: string;
   estimated_delivery?: string;
+  package_items: PackageItem[];
 }
 
 interface DataContextType {
@@ -83,6 +91,42 @@ const mapCategory = (c: any): Category => ({
   slug: c.slug ?? c.name.toLowerCase().replace(/\s+/g, '-'),
 });
 
+const parsePackageItems = (value: unknown): PackageItem[] => {
+  let parsedValue = value;
+
+  if (typeof parsedValue === 'string') {
+    try {
+      parsedValue = JSON.parse(parsedValue);
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(parsedValue)) {
+    return [];
+  }
+
+  return parsedValue
+    .map((item: any) => {
+      const quantity = Math.max(1, Math.round(Number(item?.quantity) || 1));
+      const name = String(item?.name ?? '').trim();
+      const imageUrl = String(item?.imageUrl ?? item?.image_url ?? '').trim();
+      const productId = String(item?.productId ?? item?.product_id ?? '').trim();
+
+      if (!name) {
+        return null;
+      }
+
+      return {
+        product_id: productId || undefined,
+        name,
+        image_url: imageUrl,
+        quantity,
+      };
+    })
+    .filter(Boolean) as PackageItem[];
+};
+
 const mapPackage = (p: any): Package => ({
   id: p.id,
   tracking_id: p.trackingId ?? p.tracking_id,
@@ -94,6 +138,7 @@ const mapPackage = (p: any): Package => ({
   created_at: p.createdAt ?? p.created_at ?? new Date().toISOString(),
   updated_at: p.updatedAt ?? p.updated_at ?? new Date().toISOString(),
   estimated_delivery: p.estimatedDelivery ?? p.estimated_delivery,
+  package_items: parsePackageItems(p.packageItems ?? p.package_items),
 });
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -208,16 +253,31 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       destination: pkg.destination,
       currentLocation: pkg.current_location,
       estimatedDelivery: pkg.estimated_delivery,
+      packageItems: pkg.package_items.map((item) => ({
+        productId: item.product_id,
+        name: item.name,
+        imageUrl: item.image_url,
+        quantity: item.quantity,
+      })),
     });
     setPackages((prev) => [mapPackage(data), ...prev]);
   }, []);
 
   const updatePackage = useCallback(async (id: string, updatedPackage: Partial<Package>) => {
     const data = await packagesAPI.update(id, {
+      trackingId: updatedPackage.tracking_id,
       status: updatedPackage.status,
       shippingRoute: updatedPackage.shipping_route,
+      origin: updatedPackage.origin,
+      destination: updatedPackage.destination,
       currentLocation: updatedPackage.current_location,
       estimatedDelivery: updatedPackage.estimated_delivery,
+      packageItems: updatedPackage.package_items?.map((item) => ({
+        productId: item.product_id,
+        name: item.name,
+        imageUrl: item.image_url,
+        quantity: item.quantity,
+      })),
     });
     setPackages((prev) =>
       prev.map((p) => (p.id === id ? { ...p, ...mapPackage({ ...p, ...data }) } : p))

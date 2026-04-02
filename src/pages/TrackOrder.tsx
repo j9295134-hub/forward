@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Package as PackageIcon, Search, Truck, Ship, Plane } from 'lucide-react';
-import type { Package } from '../context/DataContext';
+import type { Package, PackageItem } from '../context/DataContext';
 import { packagesAPI } from '../utils/api';
 import { normalizeTrackingId } from '../utils/tracking';
 import './Pages.css';
@@ -13,6 +13,44 @@ const TrackOrder: React.FC = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState('');
 
+  const parsePackageItems = (value: unknown): PackageItem[] => {
+    let parsedValue = value;
+
+    if (typeof parsedValue === 'string') {
+      try {
+        parsedValue = JSON.parse(parsedValue);
+      } catch {
+        return [];
+      }
+    }
+
+    if (!Array.isArray(parsedValue)) {
+      return [];
+    }
+
+    const items = parsedValue
+      .map((item: any) => {
+        const quantity = Math.max(1, Math.round(Number(item?.quantity) || 1));
+        const name = String(item?.name ?? '').trim();
+        const imageUrl = String(item?.imageUrl ?? item?.image_url ?? '').trim();
+        const productId = String(item?.productId ?? item?.product_id ?? '').trim();
+
+        if (!name) {
+          return null;
+        }
+
+        return {
+          product_id: productId || undefined,
+          name,
+          image_url: imageUrl,
+          quantity,
+        };
+      })
+      .filter(Boolean) as PackageItem[];
+
+    return items;
+  };
+
   const mapPackage = (p: any): Package => ({
     id: p.id,
     tracking_id: p.trackingId ?? p.tracking_id,
@@ -24,6 +62,7 @@ const TrackOrder: React.FC = () => {
     created_at: p.createdAt ?? p.created_at ?? new Date().toISOString(),
     updated_at: p.updatedAt ?? p.updated_at ?? new Date().toISOString(),
     estimated_delivery: p.estimatedDelivery ?? p.estimated_delivery,
+    package_items: parsePackageItems(p.packageItems ?? p.package_items),
   });
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -214,6 +253,83 @@ const TrackOrder: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {searchedPackage.package_items.length > 0 && (
+              <div style={{
+                padding: '2rem',
+                borderTop: '2px solid var(--border-color)',
+                backgroundColor: '#ffffff'
+              }}>
+                <h3 style={{ marginBottom: '1rem' }}>Package Contents</h3>
+                <p style={{ color: 'var(--text-light)', marginBottom: '1rem' }}>
+                  These are the items attached to this shipment.
+                </p>
+                <div style={{ display: 'grid', gap: '1rem' }}>
+                  {searchedPackage.package_items.map((item, index) => (
+                    <div
+                      key={`${item.product_id ?? item.name}-${index}`}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '72px minmax(0, 1fr) auto',
+                        gap: '1rem',
+                        alignItems: 'center',
+                        padding: '1rem',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '12px',
+                        backgroundColor: 'var(--light-bg)'
+                      }}
+                    >
+                      {item.image_url ? (
+                        <img
+                          src={item.image_url}
+                          alt={item.name}
+                          style={{
+                            width: '72px',
+                            height: '72px',
+                            objectFit: 'cover',
+                            borderRadius: '10px',
+                            border: '1px solid rgba(var(--primary-rgb), 0.12)'
+                          }}
+                        />
+                      ) : (
+                        <div style={{
+                          width: '72px',
+                          height: '72px',
+                          borderRadius: '10px',
+                          backgroundColor: '#e9f6ed',
+                          color: 'var(--primary-dark)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontWeight: 700
+                        }}>
+                          {index + 1}
+                        </div>
+                      )}
+
+                      <div style={{ minWidth: 0 }}>
+                        <p style={{ margin: 0, color: 'var(--text-dark)', fontWeight: 700, fontSize: '1.05rem' }}>
+                          {index + 1}. {item.name}
+                        </p>
+                        <p style={{ margin: '0.35rem 0 0', color: 'var(--text-light)' }}>
+                          Quantity: {item.quantity}
+                        </p>
+                      </div>
+
+                      <div style={{
+                        padding: '0.45rem 0.8rem',
+                        borderRadius: '999px',
+                        backgroundColor: 'rgba(var(--primary-rgb), 0.12)',
+                        color: 'var(--primary-dark)',
+                        fontWeight: 700
+                      }}>
+                        x{item.quantity}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Package Details */}
             <div style={{ padding: '2rem' }}>

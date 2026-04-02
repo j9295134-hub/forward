@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { useData } from '../context/DataContext';
+import { useData, type PackageItem } from '../context/DataContext';
 import { useToast } from '../utils/Toast';
 import { ADMIN_ROUTES } from '../utils/adminRoutes';
 import { normalizeTrackingId } from '../utils/tracking';
@@ -10,7 +10,7 @@ import '../components/admin/Admin.css';
 const AdminPackageForm: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { addPackage, updatePackage, getPackageById } = useData();
+  const { addPackage, updatePackage, getPackageById, products } = useData();
   const { addToast } = useToast();
 
   const isEditMode = !!id;
@@ -24,7 +24,10 @@ const AdminPackageForm: React.FC = () => {
     origin: 'China',
     destination: 'Ghana',
     estimated_delivery: '45-50 days',
+    package_items: [] as PackageItem[],
   });
+  const [selectedProductId, setSelectedProductId] = useState('');
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
 
   useEffect(() => {
     if (existingPackage) {
@@ -36,6 +39,7 @@ const AdminPackageForm: React.FC = () => {
         origin: existingPackage.origin,
         destination: existingPackage.destination,
         estimated_delivery: existingPackage.estimated_delivery || '45-50 days',
+        package_items: existingPackage.package_items || [],
       });
     }
   }, [existingPackage]);
@@ -87,6 +91,71 @@ const AdminPackageForm: React.FC = () => {
     setFormData((prev) => ({
       ...prev,
       tracking_id: normalizeTrackingId(`${prefix}-${timestamp}-${randomNum}`),
+    }));
+  };
+
+  const addSelectedProduct = () => {
+    if (!selectedProductId) {
+      addToast('Please choose a product to attach', 'error');
+      return;
+    }
+
+    const product = products.find((item) => item.id === selectedProductId);
+
+    if (!product) {
+      addToast('That product is no longer available', 'error');
+      return;
+    }
+
+    const quantity = Math.max(1, Math.round(selectedQuantity) || 1);
+
+    setFormData((prev) => {
+      const existingItemIndex = prev.package_items.findIndex((item) => item.product_id === product.id);
+
+      if (existingItemIndex >= 0) {
+        return {
+          ...prev,
+          package_items: prev.package_items.map((item, index) =>
+            index === existingItemIndex
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
+          ),
+        };
+      }
+
+      return {
+        ...prev,
+        package_items: [
+          ...prev.package_items,
+          {
+            product_id: product.id,
+            name: product.name,
+            image_url: product.image_url,
+            quantity,
+          },
+        ],
+      };
+    });
+
+    setSelectedProductId('');
+    setSelectedQuantity(1);
+  };
+
+  const updatePackageItemQuantity = (index: number, quantity: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      package_items: prev.package_items.map((item, itemIndex) =>
+        itemIndex === index
+          ? { ...item, quantity: Math.max(1, Math.round(quantity) || 1) }
+          : item
+      ),
+    }));
+  };
+
+  const removePackageItem = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      package_items: prev.package_items.filter((_, itemIndex) => itemIndex !== index),
     }));
   };
 
@@ -295,6 +364,157 @@ const AdminPackageForm: React.FC = () => {
               fontSize: '1rem',
             }}
           />
+        </div>
+
+        <div style={{ marginBottom: '1.5rem' }}>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
+            Package Contents
+          </label>
+          <p style={{ marginBottom: '1rem', color: 'var(--text-light)' }}>
+            Choose products from your catalog. We save the current product name, thumbnail URL, and quantity on this package so the tracking page can show them later.
+          </p>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 1fr) 120px auto',
+            gap: '0.75rem',
+            alignItems: 'end',
+            marginBottom: '1rem'
+          }}>
+            <div>
+              <label htmlFor="package_product" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
+                Product
+              </label>
+              <select
+                id="package_product"
+                value={selectedProductId}
+                onChange={(e) => setSelectedProductId(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '2px solid var(--border-color)',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                }}
+              >
+                <option value="">Select a product</option>
+                {products.map((product) => (
+                  <option key={product.id} value={product.id}>
+                    {product.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="package_quantity" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
+                Quantity
+              </label>
+              <input
+                type="number"
+                id="package_quantity"
+                min={1}
+                value={selectedQuantity}
+                onChange={(e) => setSelectedQuantity(Math.max(1, Number(e.target.value) || 1))}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '2px solid var(--border-color)',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                }}
+              />
+            </div>
+
+            <button type="button" onClick={addSelectedProduct} className="btn btn-secondary">
+              Add Item
+            </button>
+          </div>
+
+          {formData.package_items.length > 0 ? (
+            <div style={{ display: 'grid', gap: '0.75rem' }}>
+              {formData.package_items.map((item, index) => (
+                <div
+                  key={`${item.product_id ?? item.name}-${index}`}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '72px minmax(0, 1fr) 110px auto',
+                    gap: '0.75rem',
+                    alignItems: 'center',
+                    padding: '0.75rem',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '10px',
+                    backgroundColor: 'var(--light-bg)',
+                  }}
+                >
+                  {item.image_url ? (
+                    <img
+                      src={item.image_url}
+                      alt={item.name}
+                      style={{
+                        width: '72px',
+                        height: '72px',
+                        objectFit: 'cover',
+                        borderRadius: '10px',
+                        border: '1px solid rgba(var(--primary-rgb), 0.12)',
+                      }}
+                    />
+                  ) : (
+                    <div style={{
+                      width: '72px',
+                      height: '72px',
+                      borderRadius: '10px',
+                      backgroundColor: '#e9f6ed',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 700,
+                      color: 'var(--primary-dark)',
+                    }}>
+                      {index + 1}
+                    </div>
+                  )}
+
+                  <div style={{ minWidth: 0 }}>
+                    <p style={{ margin: 0, color: 'var(--text-dark)', fontWeight: 600 }}>
+                      {index + 1}. {item.name}
+                    </p>
+                    <p style={{ margin: '0.35rem 0 0', color: 'var(--text-light)', fontSize: '0.95rem' }}>
+                      Saved as a package snapshot
+                    </p>
+                  </div>
+
+                  <input
+                    type="number"
+                    min={1}
+                    value={item.quantity}
+                    onChange={(e) => updatePackageItemQuantity(index, Number(e.target.value))}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: '2px solid var(--border-color)',
+                      borderRadius: '8px',
+                      fontSize: '1rem',
+                    }}
+                  />
+
+                  <button type="button" onClick={() => removePackageItem(index)} className="btn btn-outline">
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{
+              padding: '1rem',
+              border: '1px dashed var(--border-color)',
+              borderRadius: '10px',
+              color: 'var(--text-light)',
+              backgroundColor: '#fafdfb',
+            }}>
+              No products attached yet. Tracking will still work, but the customer will only see shipping details.
+            </div>
+          )}
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
