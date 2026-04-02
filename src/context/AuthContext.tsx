@@ -1,39 +1,115 @@
-import React, { createContext, useContext, useState } from 'react';
-import { getAdminEmail } from '../utils/helpers';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { authAPI } from '../utils/api';
+import {
+  ADMIN_AUTH_EVENT,
+  clearStoredAdminSession,
+  getStoredAdminSession,
+  setStoredAdminSession,
+  type AdminSession,
+  type AdminUser,
+} from '../utils/adminAuth';
 
 interface AuthContextType {
+  admin: AdminUser | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => boolean;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('adminAuth') === 'true';
-  });
+  const [session, setSession] = useState<AdminSession | null>(() => getStoredAdminSession());
+  const [isLoading, setIsLoading] = useState(() => Boolean(getStoredAdminSession()?.token));
 
-  // no useEffect needed — state is initialized synchronously above
+  useEffect(() => {
+    const syncSession = () => {
+      setSession(getStoredAdminSession());
+    };
 
-  const login = (email: string, password: string) => {
-    // Mock authentication - in production, verify against backend
-    const adminEmail = getAdminEmail();
-    if (email === adminEmail && password === 'admin123') {
-      setIsAuthenticated(true);
-      localStorage.setItem('adminAuth', 'true');
+    window.addEventListener(ADMIN_AUTH_EVENT, syncSession);
+    window.addEventListener('storage', syncSession);
+
+    return () => {
+      window.removeEventListener(ADMIN_AUTH_EVENT, syncSession);
+      window.removeEventListener('storage', syncSession);
+    };
+  }, []);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    const validateSession = async () => {
+      if (!session?.token) {
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+
+      try {
+        const response = await authAPI.getCurrentAdmin();
+        if (isCancelled) {
+          return;
+        }
+
+        const nextSession: AdminSession = {
+          token: session.token,
+          admin: response.admin,
+        };
+
+        setStoredAdminSession(nextSession);
+        setSession(nextSession);
+      } catch {
+        if (!isCancelled) {
+          clearStoredAdminSession();
+          setSession(null);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    validateSession();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [session?.token]);
+
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await authAPI.login(email, password);
+      const nextSession: AdminSession = {
+        token: response.token,
+        admin: response.admin,
+      };
+
+      setStoredAdminSession(nextSession);
+      setSession(nextSession);
+      setIsLoading(false);
       return true;
+    } catch {
+      clearStoredAdminSession();
+      setSession(null);
+      setIsLoading(false);
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem('adminAuth');
+    clearStoredAdminSession();
+    setSession(null);
+    setIsLoading(false);
   };
 
   const value: AuthContextType = {
-    isAuthenticated,
+    admin: session?.admin ?? null,
+    isAuthenticated: Boolean(session?.token && session?.admin),
+    isLoading,
     login,
     logout,
   };

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
 import { useToast } from '../utils/Toast';
-import { getAdminEmail } from '../utils/helpers';
 import { ADMIN_ROUTES } from '../utils/adminRoutes';
 import '../components/admin/Admin.css';
 
@@ -16,22 +15,21 @@ const AdminLogin: React.FC = () => {
   const { settings } = useData();
   const { addToast } = useToast();
   const brandName = settings.brandName;
-  const adminEmail = getAdminEmail(brandName);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      if (login(email, password)) {
+    try {
+      if (await login(email, password)) {
         addToast('Login successful!', 'success');
         navigate(ADMIN_ROUTES.dashboard);
       } else {
         addToast('Invalid email or password', 'error');
       }
+    } finally {
       setIsLoading(false);
-    }, 500);
+    }
   };
 
   return (
@@ -49,7 +47,7 @@ const AdminLogin: React.FC = () => {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={adminEmail}
+                placeholder="Enter your admin email"
                 required
               />
             </div>
@@ -67,9 +65,8 @@ const AdminLogin: React.FC = () => {
             </div>
 
             <div className="login-info">
-              <p><strong>Demo Credentials:</strong></p>
-              <p>Email: {adminEmail}</p>
-              <p>Password: admin123</p>
+              <p><strong>Secure Admin Access</strong></p>
+              <p>Use the admin email and password configured on the backend for this deployment.</p>
             </div>
 
             <button type="submit" className="btn btn-primary btn-lg" disabled={isLoading} style={{ width: '100%' }}>

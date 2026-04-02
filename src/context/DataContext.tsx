@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { productsAPI, categoriesAPI, packagesAPI, settingsAPI } from '../utils/api';
 import { normalizeTrackingId } from '../utils/tracking';
+import { useAuth } from './AuthContext';
 
 export interface Product {
   id: string;
@@ -144,6 +145,7 @@ const mapPackage = (p: any): Package => ({
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAuthenticated } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [packages, setPackages] = useState<Package[]>([]);
@@ -156,16 +158,22 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Fetch all data from the API on mount
   useEffect(() => {
     const fetchAll = async () => {
+      setLoading(true);
       try {
+        const packagesRequest = isAuthenticated ? packagesAPI.getAll() : Promise.resolve([]);
         const [prodsResult, catsResult, pkgsResult, settingsResult] = await Promise.allSettled([
           productsAPI.getAll(),
           categoriesAPI.getAll(),
-          packagesAPI.getAll(),
+          packagesRequest,
           settingsAPI.getAll(),
         ]);
         if (prodsResult.status === 'fulfilled') setProducts((prodsResult.value || []).map(mapProduct));
         if (catsResult.status === 'fulfilled') setCategories((catsResult.value || []).map(mapCategory));
-        if (pkgsResult.status === 'fulfilled') setPackages((pkgsResult.value || []).map(mapPackage));
+        if (pkgsResult.status === 'fulfilled') {
+          setPackages((pkgsResult.value || []).map(mapPackage));
+        } else {
+          setPackages([]);
+        }
         if (settingsResult.status === 'fulfilled') {
           const raw = settingsResult.value;
           setSettings(prev => ({
@@ -180,7 +188,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     };
     fetchAll();
-  }, []);
+  }, [isAuthenticated]);
 
   const addProduct = useCallback(async (product: Omit<Product, 'id' | 'created_at'>) => {
     const data = await productsAPI.create({
