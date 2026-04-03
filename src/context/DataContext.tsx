@@ -10,6 +10,7 @@ export interface Product {
   price_estimate: number;
   category_id: string;
   image_url: string;
+  image_urls: string[];
   is_featured: boolean;
   created_at: string;
   status?: 'in_stock' | 'preorder';
@@ -71,20 +72,64 @@ interface DataContextType {
   getPackageByTrackingId: (trackingId: string) => Package | undefined;
 }
 
+const parseProductImages = (value: unknown, fallbackValue?: unknown): string[] => {
+  const seen = new Set<string>();
+  const candidates: unknown[] = [];
+
+  if (Array.isArray(value)) {
+    candidates.push(...value);
+  } else if (typeof value === 'string') {
+    const trimmedValue = value.trim();
+
+    if (trimmedValue) {
+      try {
+        const parsedValue = JSON.parse(trimmedValue);
+        if (Array.isArray(parsedValue)) {
+          candidates.push(...parsedValue);
+        } else {
+          candidates.push(trimmedValue);
+        }
+      } catch {
+        candidates.push(trimmedValue);
+      }
+    }
+  }
+
+  if (typeof fallbackValue === 'string' && fallbackValue.trim()) {
+    candidates.push(fallbackValue.trim());
+  }
+
+  return candidates
+    .map((item) => String(item ?? '').trim())
+    .filter((item) => {
+      if (!item || seen.has(item)) {
+        return false;
+      }
+
+      seen.add(item);
+      return true;
+    });
+};
+
 // Map backend camelCase response to frontend snake_case
-const mapProduct = (p: any): Product => ({
-  id: p.id,
-  name: p.name,
-  description: p.description,
-  price_estimate: p.price ?? p.price_estimate,
-  category_id: p.categoryId ?? p.category_id,
-  image_url: p.image ?? p.image_url,
-  is_featured: p.isFeatured === 1 || p.isFeatured === true || p.is_featured === true,
-  created_at: p.createdAt ?? p.created_at ?? new Date().toISOString(),
-  status: p.status ?? 'in_stock',
-  estimated_delivery: p.estimatedDelivery ?? p.estimated_delivery,
-  stock: p.stock ?? 0,
-});
+const mapProduct = (p: any): Product => {
+  const imageUrls = parseProductImages(p.images ?? p.image_urls, p.image ?? p.image_url);
+
+  return {
+    id: p.id,
+    name: p.name,
+    description: p.description,
+    price_estimate: p.price ?? p.price_estimate,
+    category_id: p.categoryId ?? p.category_id,
+    image_url: imageUrls[0] || '',
+    image_urls: imageUrls,
+    is_featured: p.isFeatured === 1 || p.isFeatured === true || p.is_featured === true,
+    created_at: p.createdAt ?? p.created_at ?? new Date().toISOString(),
+    status: p.status ?? 'in_stock',
+    estimated_delivery: p.estimatedDelivery ?? p.estimated_delivery,
+    stock: p.stock ?? 0,
+  };
+};
 
 const mapCategory = (c: any): Category => ({
   id: c.id,
@@ -196,7 +241,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       description: product.description,
       price: product.price_estimate,
       categoryId: product.category_id,
-      image: product.image_url,
+      image: product.image_urls[0] ?? product.image_url,
+      images: product.image_urls,
       isFeatured: product.is_featured,
       status: product.status,
       estimatedDelivery: product.estimated_delivery,
@@ -210,7 +256,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       description: updatedProduct.description,
       price: updatedProduct.price_estimate,
       categoryId: updatedProduct.category_id,
-      image: updatedProduct.image_url,
+      image: updatedProduct.image_urls?.[0] ?? updatedProduct.image_url,
+      images: updatedProduct.image_urls,
       isFeatured: updatedProduct.is_featured,
       status: updatedProduct.status,
       estimatedDelivery: updatedProduct.estimated_delivery,

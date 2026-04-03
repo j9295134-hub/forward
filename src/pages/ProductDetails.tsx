@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Share2 } from 'lucide-react';
 import { useData } from '../context/DataContext';
@@ -14,10 +14,20 @@ const ProductDetails: React.FC = () => {
   const { addToCart } = useCart();
   const { addToast } = useToast();
   const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState('');
 
   const product = getProductById(id || '');
   const brandName = settings.brandName;
   const phoneNumber = settings.whatsappNumber;
+  const productImages = product?.image_urls?.length
+    ? product.image_urls
+    : product?.image_url
+      ? [product.image_url]
+      : [];
+
+  useEffect(() => {
+    setSelectedImage(productImages[0] || '');
+  }, [product?.id]);
 
   if (!product) {
     return (
@@ -53,7 +63,7 @@ const ProductDetails: React.FC = () => {
       navigator.share({
         title: product.name,
         text: product.description,
-        url: url,
+        url,
       });
     } else {
       navigator.clipboard.writeText(url);
@@ -70,12 +80,51 @@ const ProductDetails: React.FC = () => {
         </button>
 
         <div className="product-details-container">
-          {/* Product Image */}
           <div className="product-details-image">
-            <img src={product.image_url} alt={product.name} />
+            <img src={selectedImage || product.image_url} alt={product.name} />
+
+            {productImages.length > 1 && (
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(72px, 1fr))',
+                  gap: '0.75rem',
+                  marginTop: '1rem',
+                }}
+              >
+                {productImages.map((imageUrl, index) => (
+                  <button
+                    key={`${imageUrl}-${index}`}
+                    type="button"
+                    onClick={() => setSelectedImage(imageUrl)}
+                    style={{
+                      padding: 0,
+                      border: imageUrl === (selectedImage || product.image_url)
+                        ? '2px solid var(--primary-color)'
+                        : '2px solid var(--border-color)',
+                      borderRadius: '10px',
+                      overflow: 'hidden',
+                      cursor: 'pointer',
+                      background: 'white',
+                    }}
+                    aria-label={`View ${product.name} image ${index + 1}`}
+                  >
+                    <img
+                      src={imageUrl}
+                      alt={`${product.name} view ${index + 1}`}
+                      style={{
+                        width: '100%',
+                        aspectRatio: '1 / 1',
+                        objectFit: 'cover',
+                        display: 'block',
+                      }}
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Product Info */}
           <div className="product-details-info">
             <h1>{product.name}</h1>
 
@@ -102,26 +151,24 @@ const ProductDetails: React.FC = () => {
               {product.is_featured && (
                 <div className="meta-item">
                   <span className="meta-label">Featured</span>
-                  <span className="meta-value">⭐ Featured</span>
+                  <span className="meta-value">Featured</span>
                 </div>
               )}
             </div>
 
             <p className="product-description">{product.description}</p>
 
-            {/* Quantity Selector */}
             <div style={{ marginBottom: '1.5rem' }}>
               <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
                 Quantity
               </label>
               <div className="quantity-selector">
-                <button onClick={() => handleQuantityChange(quantity - 1)}>−</button>
+                <button onClick={() => handleQuantityChange(quantity - 1)}>-</button>
                 <input type="number" className="quantity-input" value={quantity} readOnly />
                 <button onClick={() => handleQuantityChange(quantity + 1)}>+</button>
               </div>
             </div>
 
-            {/* Actions */}
             <div className="product-actions">
               <button onClick={handleAddToCart} className="btn btn-primary btn-lg">
                 Add to Cart
@@ -135,12 +182,11 @@ const ProductDetails: React.FC = () => {
               </button>
             </div>
 
-            {/* Additional Info */}
             <div style={{
               marginTop: '2rem',
               padding: '1.5rem',
               backgroundColor: 'var(--light-bg)',
-              borderRadius: '8px'
+              borderRadius: '8px',
             }}>
               <h3 style={{ marginTop: 0, marginBottom: '1rem' }}>Why Choose {brandName}?</h3>
               <ul style={{ paddingLeft: '1.5rem', color: 'var(--text-light)' }}>
